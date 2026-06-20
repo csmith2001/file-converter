@@ -8,7 +8,7 @@ pillow_heif.register_heif_opener()
 root = tk.Tk()
 root.withdraw()
 
-img_types = "*.jpg *.jpeg *.png *.heic *.webp"
+img_types = "*.jpg *.jpeg *.png *.heic *.webp *.bmp *.gif *.tiff *.avif"
 file_types = [("Image Files:", img_types)]
 
 files = filedialog.askopenfilenames(filetypes=file_types)
