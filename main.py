@@ -3,11 +3,14 @@ from pathlib import Path
 from PIL import Image
 from tkinter import ttk, filedialog
 from ttkbootstrap.dialogs import Messagebox
-import tkinter as tk, ttkbootstrap as tb, pillow_heif
+import ttkbootstrap as tb, pillow_heif
 
 # Globals
-IMG_FORMATS = ["jpg", "jpeg", "png", "heic", "webp", "bmp", "gif", "tiff", "avif"]
+IMG_FORMATS = ["jpg", "jpeg", "png", "heic", "webp", "tiff", "bmp"]
+TXT_FORMATS = ["csv", "txt", "md"]
+THEMES = ["flatly", "darkly"]
 
+# function to change theme styles
 def change_theme(*args):
     window.style.theme_use(selected_theme.get())
 
@@ -45,11 +48,10 @@ def convert_files():
             if not target_format:
                 continue
 
-            if source_format in IMG_FORMATS and target_format in IMG_FORMATS:
-                convert_img(file_path, target_format)
-
-            else:
+            if source_format not in IMG_FORMATS or target_format not in IMG_FORMATS:
                 raise ValueError(f"File Type not supported: {source_format}")
+            
+            convert_img(file_path, target_format)     
 
         except Exception as e:
             Messagebox.show_error(f"Something went wrong: {e}", parent=window)
@@ -57,7 +59,7 @@ def convert_files():
 pillow_heif.register_heif_opener()
 
 # File Types
-img_types = "*.jpg *.jpeg *.png *.heic *.webp *.bmp *.gif *.tiff *.avif"
+img_types = [f"*.{format}" for format in IMG_FORMATS]
 file_types = [("Image Files:", img_types)]
 
 # Prompt for file selection
@@ -73,9 +75,8 @@ suffixes = list({f"*{Path(file).suffix.lower()}" for file in files})
 # Window constants
 title = "Really Cool File Converter"
 title_row = 0
-theme_selector = 1
-headers_row = 2
-files_row = 3
+headers_row = title_row + 3
+files_row = headers_row + 2
 
 # Initialize window and set default theme/title
 window = tb.Window(themename="darkly")
@@ -85,7 +86,7 @@ window.title(title)
 window.lift()
 window.focus_force()
 
-# 
+# Update after all widgets are created
 window.update_idletasks()
 
 # Get required size based on widgets
@@ -101,26 +102,29 @@ y = (window.winfo_screenheight() // 2) - (height // 2)
 
 window.geometry(f"{width}x{height}+{x}+{y}")
 
-# 
+# Create main frame for window
 main_frame = ttk.Frame(window, padding=15)
 main_frame.grid(row=title_row, column=0, sticky="nsew")
 
-# 
+# Add labels for window elements
 ttk.Label(main_frame,text=title,font=("Segoe UI", 20, "bold")).grid(row=title_row, column=0, columnspan=4, pady=(0, 15))
-ttk.Label(main_frame,text="File").grid(row=headers_row,column=0,padx=10,pady=10)
-ttk.Label(main_frame,text="Convert to").grid(row=headers_row,column=1,padx=10,pady=10)
-ttk.Label(main_frame, text="Theme").grid(row=theme_selector, column=0, padx=10, pady=10)
+ttk.Label(main_frame, text=r"Select a theme:").grid(row=title_row, column=5, padx=10, pady=10)
 
-themes = ["flatly", "darkly"]
+# GUI button for theme selection
 selected_theme = tb.StringVar(value="darkly")
 selected_theme.trace_add("write", change_theme)
 
-ttk.Combobox(main_frame,textvariable=selected_theme,values=themes,state="readonly",width=10).grid(row=1, column=1, padx=10, pady=10)
+ttk.Combobox(main_frame,textvariable=selected_theme,values=THEMES,state="readonly",width=10).grid(row=title_row, column=6, padx=10, pady=10)
+ttk.Separator(main_frame,orient='horizontal').grid(row=title_row + 2, column=0, columnspan=2, sticky="ew", pady=5)
+
+ttk.Label(main_frame,text="File").grid(row=headers_row,column=0,padx=10,pady=10)
+ttk.Label(main_frame,text="Convert to").grid(row=headers_row,column=1,padx=10,pady=10)
+
 
 # Create rows
 rows = []
 
-for i, file in enumerate(files,start=3):
+for i, file in enumerate(files,start=files_row):
     file_path = Path(file)
 
     ttk.Label(main_frame,text=file_path.name).grid(row=i,column=0)
