@@ -1,14 +1,24 @@
-# Imports
+###########################
+## IMPORTS ##
+###########################
+
 from pathlib import Path
 from PIL import Image
 from tkinter import ttk, filedialog
 from ttkbootstrap.dialogs import Messagebox
 import ttkbootstrap as tb, pillow_heif
 
-# Globals
+###########################
+## GLOBALS ##
+###########################
+
 IMG_FORMATS = ["jpg", "jpeg", "png", "heic", "webp", "tiff", "bmp"]
 TXT_FORMATS = ["csv", "txt", "md"]
 THEMES = ["flatly", "darkly"]
+
+###########################
+## FUNCTIONS ##
+###########################
 
 # function to change theme styles
 def change_theme(*args):
@@ -56,6 +66,11 @@ def convert_files():
         except Exception as e:
             Messagebox.show_error(f"Something went wrong: {e}", parent=window)
 
+###########################
+## MAIN PROGRAM ##
+###########################
+
+# HEIC support
 pillow_heif.register_heif_opener()
 
 # File Types
@@ -67,10 +82,6 @@ files = filedialog.askopenfilenames(filetypes=file_types)
 
 # Convert selected file suffixes set to list
 suffixes = list({f"*{Path(file).suffix.lower()}" for file in files})
-
-###########################
-## UI ##
-###########################
 
 # Window constants
 title = "Really Cool File Converter"
@@ -120,7 +131,6 @@ ttk.Separator(main_frame,orient='horizontal').grid(row=title_row + 2, column=0, 
 ttk.Label(main_frame,text="File").grid(row=headers_row,column=0,padx=10,pady=10)
 ttk.Label(main_frame,text="Convert to").grid(row=headers_row,column=1,padx=10,pady=10)
 
-
 # Create rows
 rows = []
 
@@ -140,3 +150,11 @@ for i, file in enumerate(files,start=files_row):
 ttk.Button(main_frame,text="Convert All",command=convert_files).grid(row=files_row + len(files), column=0, columnspan=2, pady=20)
 
 window.mainloop()
+
+###########################
+## NOTES ##
+###########################
+"""
+1. TODO 6/20/26 Work on other file formats
+2. TODO 6/20/26 Work on adding more complex support to images. I.e. support for animated file types.
+"""
