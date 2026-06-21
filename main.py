@@ -4,7 +4,7 @@
 
 from pathlib import Path
 from PIL import Image
-from tkinter import ttk, filedialog
+from tkinter import filedialog
 from ttkbootstrap.dialogs import Messagebox
 import ttkbootstrap as tb, pillow_heif
 
