@@ -19,10 +19,10 @@ set VENV=%VENV_DIR%\Scripts\python.exe
 
 if not exist "%VENV_DIR%" (
     echo.
-    echo Creating .venv...
+    echo Creating .venv
     python -m venv "%VENV_DIR%"
     echo.
-    echo Upgrading pip...
+    echo Upgrading pip
     "%VENV%" -m pip install --upgrade pip
 ) else (
     echo .venv exists

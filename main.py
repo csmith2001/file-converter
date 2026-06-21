@@ -22,70 +22,73 @@ THEMES = ["flatly", "darkly", "cosmo", "solar", "morph", "vapor", "superhero", "
 
 # function used to restart app
 def restart_app(main_frame, file_widgets, files_row, rows, buttons, window):
-        new_files = filedialog.askopenfilenames()
+    window.lift()
+    window.focus_force()
+    window.update()
+    new_files = filedialog.askopenfilenames(parent=window)
 
-        if not new_files:
-            return
+    if not new_files:
+        return
 
-        # Clear old UI
-        for widget in file_widgets:
-            widget.destroy()
-        file_widgets.clear()
-        rows.clear()
+    # Clear old UI
+    for widget in file_widgets:
+        widget.destroy()
+    file_widgets.clear()
+    rows.clear()
 
-        # Clear old buttons
-        for b in buttons:
-            b.destroy()
-        buttons.clear()
+    # Clear old buttons
+    for b in buttons:
+        b.destroy()
+    buttons.clear()
 
-        # Rebuild file rows
-        for i, file in enumerate(new_files, start=files_row):
-            file_path = Path(file)
+    # Rebuild file rows
+    for i, file in enumerate(new_files, start=files_row):
+        file_path = Path(file)
 
-            label = tb.Label(
-                main_frame,
-                text=file_path.name
-            )
-            label.grid(row=i, column=0)
-
-            valid_formats = get_gui_formats(file_path)
-            var = tb.StringVar(value=valid_formats[0])
-
-            combo = tb.Combobox(
-                main_frame,
-                textvariable=var,
-                values=valid_formats
-            )
-            combo.grid(row=i, column=1, padx=10, pady=5)
-
-            file_widgets.extend([label, combo])
-            rows.append((file_path, var))
-
-        # Recreate buttons
-        buttons_row = files_row + len(rows)
-
-        convert_all = tb.Button(
+        label = tb.Label(
             main_frame,
-            text="Convert All",
-            command=lambda: convert_files(window, rows)
+            text=file_path.name
         )
-        convert_all.grid(row=buttons_row, column=0, padx=10, pady=20)
+        label.grid(row=i, column=0)
 
-        restart = tb.Button(
+        valid_formats = get_gui_formats(file_path)
+        var = tb.StringVar(value=valid_formats[0])
+
+        combo = tb.Combobox(
             main_frame,
-            text="Choose more files",
-            command=lambda: restart_app(main_frame, file_widgets, files_row, rows, buttons, window)
+            textvariable=var,
+            values=valid_formats
         )
-        restart.grid(row=buttons_row, column=1, padx=10, pady=20)
+        combo.grid(row=i, column=1, padx=10, pady=5)
 
-        exit_btn = tb.Button(
-            main_frame,
-            text="Exit",
-            command=window.destroy
-        )
-        exit_btn.grid(row=buttons_row, column=2, padx=10, pady=20)
+        file_widgets.extend([label, combo])
+        rows.append((file_path, var))
 
-        buttons.extend([convert_all, restart, exit_btn])
+    # Recreate buttons
+    buttons_row = files_row + len(rows)
+
+    convert_all = tb.Button(
+        main_frame,
+        text="Convert All",
+        command=lambda: convert_files(window, rows)
+    )
+    convert_all.grid(row=buttons_row, column=0, padx=10, pady=20)
+
+    restart = tb.Button(
+        main_frame,
+        text="Choose more files",
+        command=lambda: restart_app(main_frame, file_widgets, files_row, rows, buttons, window)
+    )
+    restart.grid(row=buttons_row, column=1, padx=10, pady=20)
+
+    exit_btn = tb.Button(
+        main_frame,
+        text="Exit",
+        command=window.destroy
+    )
+    exit_btn.grid(row=buttons_row, column=2, padx=10, pady=20)
+
+    buttons.extend([convert_all, restart, exit_btn])
 
 # function to change theme styles
 def change_theme(window, selected_theme, *args):
@@ -145,8 +148,21 @@ def main():
     img_types = [f"*.{format}" for format in IMG_FORMATS]
     file_types = [("Image Files:", img_types)]
 
+    # Initialize window and set default theme/title
+    title = "Really Cool File Converter"
+    title_row = 0
+    headers_row = title_row + 3
+    files_row = headers_row + 2
+
+    window = tb.Window(themename="darkly")
+    window.title(title)
+
+    window.lift()
+    window.focus_force()
+    window.update()
+
     # Prompt for file selection
-    files = filedialog.askopenfilenames(filetypes=file_types)
+    files = filedialog.askopenfilenames(parent=window,filetypes=file_types)
 
     if not files:
         return
@@ -154,17 +170,8 @@ def main():
     # Convert selected file suffixes set to list
     suffixes = list({f"*{Path(file).suffix.lower()}" for file in files})
 
-    # Window constants
-    title = "Really Cool File Converter"
-    title_row = 0
-    headers_row = title_row + 3
-    files_row = headers_row + 2
-
-    # Initialize window and set default theme/title
-    window = tb.Window(themename="darkly")
-    window.title(title)
-
     # Bring window to front focus
+    window.deiconify()
     window.lift()
     window.focus_force()
 
