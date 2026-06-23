@@ -20,6 +20,23 @@ THEMES = ["flatly", "darkly", "cosmo", "solar", "morph", "vapor", "superhero", "
 ## FUNCTIONS ##
 ###########################
 
+# function used to resize images
+def img_resize(img, width=None, height=None):
+    if not width and not height:
+        return img
+    
+    orig_width, orig_height = img.size
+
+    if width and not height:
+        ratio = width / orig_width
+        height = int(orig_height * ratio)
+
+    if height and not width:
+        ratio = height / orig_height
+        width = int(orig_width * ratio)
+
+    return img.resize((width, height))
+
 # function used to restart app
 def restart_app(main_frame, file_widgets, files_row, rows, buttons, window):
     window.lift()
