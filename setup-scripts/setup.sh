@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
+OS="$(uname)"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 VENV_DIR="$PROJECT_DIR/.venv"
@@ -10,6 +11,12 @@ echo "Project Directory: $PROJECT_DIR"
 echo "Script Directory: $SCRIPT_DIR"
 echo
 echo "Checking for Python Virtual Environment..."
+
+# Check if python is installed
+if ! command -v python3 > /dev/null; then
+    echo "ERROR: python 3 is not installed!"
+    exit 1
+fi
 
 # Check if .venv exists
 if [ ! -d "${VENV_DIR}" ]; then
@@ -64,10 +71,22 @@ done
 echo
 echo "================================"
 echo "Setup Complete!"
-echo "To activate run: "$VENV_DIR"/bin/activate"
+echo "To activate run: "source $VENV_DIR"/bin/activate"
 echo "================================"
 echo
 
 : << 'NOTES'
+
+if ! command -v python3 > /dev/null; then
+    ! = NOT
+    command -v python3
+        command = 
+        -v =
+        python3 =
+    > /dev/null
+        > =
+        /dev/null = 
+
+exit 1 = stops the script immediately
 
 NOTES
