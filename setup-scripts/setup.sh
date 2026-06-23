@@ -36,6 +36,14 @@ if ! python3 -m venv --help > /dev/null 2>&1; then
     exit 1
 fi
 
+# Check if tk is installed
+if ! python3 -c "import tkinter; print('installed')" 2>/dev/null; then
+        echo "ERROR: Python tkinter support is missing"
+        echo
+        echo "Install with: sudo apt install python3-tk"
+        exit 1
+    fi
+
 # Check if .venv dir exists
 if [ ! -d "${VENV_DIR}" ]; then
     echo "Creating .venv"
