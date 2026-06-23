@@ -13,12 +13,30 @@ echo
 echo "Checking for Python Virtual Environment..."
 
 # Check if python is installed
-if ! command -v python3 > /dev/null; then
+if ! python3 --version > /dev/null 2>&1; then
     echo "ERROR: python 3 is not installed!"
+    echo "Install with:"
+    echo "sudo apt install python3 python3-pip"
     exit 1
 fi
 
-# Check if .venv exists
+# Check if venv is installed
+if ! python3 -m venv --help > /dev/null 2>&1; then
+    echo "ERROR: Python venv support is missing"
+    echo
+
+    if [ "$OS" = "Darwin" ]; then
+        echo "Install with: brew install python"
+    elif [ "$OS" = "Linux" ]; then
+        echo "Install with: sudo apt install python3-venv"
+    else
+        echo "Install python3-venv for your system"
+    fi
+
+    exit 1
+fi
+
+# Check if .venv dir exists
 if [ ! -d "${VENV_DIR}" ]; then
     echo "Creating .venv"
     python3 -m venv "$VENV_DIR"
@@ -77,7 +95,7 @@ echo
 
 : << 'NOTES'
 
-if ! command -v python3 > /dev/null; then
+! command -v python3 > /dev/null
     ! = NOT
     command -v python3
         command = 
@@ -88,5 +106,16 @@ if ! command -v python3 > /dev/null; then
         /dev/null = 
 
 exit 1 = stops the script immediately
+
+! python3 -m venv --help /dev/null 2>&1
+    ! = NOT
+    python3 -m venv = Tells python to create a virtual environment
+    --help = Returns a help guide on left command
+    /dev/null =
+    2>&1
+        2 =
+        > =
+        & =
+        1 =
 
 NOTES
